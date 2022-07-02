@@ -14,7 +14,7 @@ const ChapController = {
       return res.status(404).json("Thiếu slug rồi bạn ơi!");
     }
 
-    const url = `${process.env.BASE_URL}/truyen-tranh${slug}`;
+    const url = `${process.env.BASE_URL}/truyen-tranh/${slug}`;
     const url2 = `${process.env.BASE_URL}/truyen-tranh/${slug?.split("/")[1]}`;
 
     try {
@@ -25,10 +25,6 @@ const ChapController = {
         const img = $(this).find("img").attr("src");
         const alt = $(this).find("img").attr("alt");
         results.push({ img, alt });
-      });
-
-      $("#chapterNav a").each(function () {
-        console.log($(this).attr("href"));
       });
 
       const html2 = await axios(url2);

@@ -64,7 +64,7 @@ const RankController: any = {
               const href = $(this)
                 .find("figure > div > a")
                 .attr("href")
-                .split(process.env.BASE_URL)[1];
+                .split(`${process.env.BASE_URL}/truyen-tranh`)[1];
               const img = $(this).find("figure > div > a > img").attr("src");
               const name = $(this).find("figure > figcaption > h3 > a").text();
               const newChapters = [];

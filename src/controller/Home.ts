@@ -22,7 +22,6 @@ const HomeController = {
     const page: Number = Number(req.query.page) || 1;
     const url = `${process.env.BASE_URL}/?page=${page}`;
 
-    const truyen_de_cu: ComicType[] = [];
     const truyen_moi_cap_nhat: ComicType[] = [];
 
     let totalPage = "";
@@ -30,28 +29,6 @@ const HomeController = {
     try {
       const html = await axios(url);
       const $ = cheerio.load(html.data);
-
-      // Get truyen_de_cu
-      $(".items-slide > .owl-carousel").each(function () {
-        $(this)
-          .find("div > div > div")
-          .each(function () {
-            const href = getSlug(
-              $(this).find("a").attr("href"),
-              "/truyen-tranh"
-            );
-            const name = $(this).find("div > h3 > a").text();
-            const img = $(this).find("a > img").attr("src");
-            const newChapter = { name: "", href: "", time: "" };
-            newChapter.name = $(this).find("div > a").text();
-            newChapter.href = getSlug(
-              $(this).find("div > a").attr("href"),
-              "/truyen-tranh"
-            );
-            newChapter.time = $(this).find("div > span").text();
-            truyen_de_cu.push({ href, name, img, newChapter });
-          });
-      });
 
       // Get tuyen_moi_cap_nhat
       $(".items > .row > .item").each(function () {
@@ -87,7 +64,6 @@ const HomeController = {
       });
 
       res.json({
-        truyen_de_cu,
         truyen_moi_cap_nhat,
         totalPage: Number(totalPage.split(`?page=`)[1]),
       });

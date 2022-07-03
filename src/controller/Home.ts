@@ -64,7 +64,7 @@ const HomeController = {
       });
 
       res.json({
-        truyen_moi_cap_nhat,
+        data: truyen_moi_cap_nhat,
         totalPage: Number(totalPage.split(`?page=`)[1]),
       });
     } catch (error) {

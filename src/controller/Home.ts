@@ -71,6 +71,38 @@ const HomeController = {
       res.status(500).json("Server not fount!");
     }
   },
+  getBanner: async (req, res) => {
+    const url = `${process.env.BASE_URL}/tim-truyen-nang-cao?genres=&notgenres=&gender=-1&status=-1&minchapter=1&sort=10`;
+
+    const data: {
+      name: string;
+      img: string;
+      href: string;
+      description: string;
+    }[] = [];
+
+    try {
+      const html = await axios(url);
+      const $ = cheerio.load(html.data);
+      $(".box_tootip").each(function () {
+        const name = $(this).find(".box_li > .title").text();
+        const img = $(this)
+          .find(".box_li > .clearfix > .box_img > a > img")
+          .attr("data-original");
+        const href = $(this)
+          .find(".box_li > .clearfix > .box_img > a")
+          .attr("href")
+          .split("truyen-tranh")[1];
+        const description = $(this).find(".box_li > .box_text").text();
+        data.push({ name, img, href, description });
+      });
+      res.json({
+        data: data.filter((item) => item.description.length > 0),
+      });
+    } catch (error) {
+      res.status(500).json("Server not fount!");
+    }
+  },
 };
 
 export default HomeController;

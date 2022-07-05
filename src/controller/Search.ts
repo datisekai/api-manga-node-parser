@@ -10,7 +10,6 @@ interface Filter {
 const Search = {
   getKeyWord: async (req, res) => {
     const results = [];
-    const categories = [];
     const keyword = req.query.keyword;
     const page = req.query.page || 1;
     let totalPage = "1";
@@ -29,7 +28,9 @@ const Search = {
           .find("figure > div > a")
           .attr("href")
           .split("truyen-tranh")[1];
-        const img = $(this).find("figure > div > a > img").attr("src");
+        const img = $(this)
+          .find("figure > div > a > img")
+          .attr("data-original");
         const name = $(this).find("figcaption > h3 > a").text();
         const chapters = [];
         $(this)
@@ -44,13 +45,7 @@ const Search = {
             chapters.push({ time, name, href });
           });
 
-        results.push({ href, img, name, chapters });
-      });
-
-      $("select > option").each(function () {
-        const name = $(this).text();
-        const href = ($(this).val() as string).split("the-loai")[1];
-        categories.push({ name, href });
+        results.push({ href, img, name, newChapters: chapters });
       });
 
       $("#ctl00_mainContent_ctl01_divPager > ul > li").each(function () {
@@ -58,8 +53,7 @@ const Search = {
       });
 
       return res.json({
-        results,
-        categories,
+        data: results,
         totalPage: totalPage !== "1" ? Number(totalPage.split("page=")[1]) : 1,
       });
     } catch (error) {

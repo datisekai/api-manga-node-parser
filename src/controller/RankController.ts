@@ -95,9 +95,8 @@ const RankController: any = {
         });
         return resp.json({
           data,
-          totalPage: Number(
-            paginations[paginations.length - 1].split("page=")[1]
-          ),
+          totalPage:
+            Number(paginations[paginations.length - 1]?.split("page=")[1]) || 1,
         });
       });
     } catch (err) {

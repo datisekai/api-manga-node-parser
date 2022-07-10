@@ -8,10 +8,12 @@ import ChapRoute from "./routes/Chap";
 import DetailsRoute from "./routes/Details";
 import SearchRoute from "./routes/Search";
 
+dotenv.config();
+
 const app = express();
 app.use(bodyParser.json({ limit: "50mb" }));
-app.use(cors());
-dotenv.config();
+app.use(cors({ origin: process.env.URL_FRONT_END }));
+
 app.use(
   bodyParser.urlencoded({
     limit: "50mb",

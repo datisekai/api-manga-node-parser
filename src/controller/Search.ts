@@ -1,6 +1,5 @@
 import cheerio from "cheerio";
 import axios from "axios";
-import getSlugChap from "../utils/getSlug";
 
 interface Filter {
   id: number;
@@ -18,12 +17,14 @@ const Search = {
       return res.status(404).json({ message: "Hihi deo co keyword nha" });
     }
 
-    const url = `${process.env.BASE_URL}/the-loai?keyword=${keyword}&page=${page}`;
+    const url = `${process.env.BASE_URL}/tim-truyen?keyword=${keyword}&page=${page}`;
 
     try {
       const html = await axios(url);
       const $ = cheerio.load(html.data);
-      $(".Module-247 > div > div > div > div").each(function () {
+      $(
+        `.Module-${process.env.MODULE_SEARCH_KEYWORD} > div > div > div > div`
+      ).each(function () {
         const href = $(this)
           .find("figure > div > a")
           .attr("href")
@@ -140,39 +141,38 @@ const Search = {
     try {
       const html = await axios(url);
       const $ = cheerio.load(html.data);
-      $(".Module-262 > .ModuleContent > .items > .row > .item").each(
-        function () {
-          const img = $(this)
-            .find("figure > div > a > img")
-            .attr("data-original");
+      $(
+        `.Module-${process.env.MODULE_SEARCH_ADVANED} > .ModuleContent > .items > .row > .item`
+      ).each(function () {
+        const img = $(this)
+          .find("figure > div > a > img")
+          .attr("data-original");
 
-          const href = $(this)
-            .find("figure > div > a")
-            .attr("href")
-            .split("truyen-tranh")[1];
-          const name = $(this).find("figure > figcaption > h3").text();
-          const newChapters: { name: string; href: string; time: string }[] =
-            [];
-          $(this)
-            .find("figure > figcaption > ul > li")
-            .each(function () {
-              const newChapter: { name: string; href: string; time: string } = {
-                name: "",
-                href: "",
-                time: "",
-              };
-              newChapter.name = $(this).find("a").text();
-              newChapter.href = $(this)
-                .find("a")
-                .attr("href")
-                .split("truyen-tranh")[1];
-              newChapter.time = $(this).find("i").text();
-              newChapters.push(newChapter);
-            });
+        const href = $(this)
+          .find("figure > div > a")
+          .attr("href")
+          .split("truyen-tranh")[1];
+        const name = $(this).find("figure > figcaption > h3").text();
+        const newChapters: { name: string; href: string; time: string }[] = [];
+        $(this)
+          .find("figure > figcaption > ul > li")
+          .each(function () {
+            const newChapter: { name: string; href: string; time: string } = {
+              name: "",
+              href: "",
+              time: "",
+            };
+            newChapter.name = $(this).find("a").text();
+            newChapter.href = $(this)
+              .find("a")
+              .attr("href")
+              .split("truyen-tranh")[1];
+            newChapter.time = $(this).find("i").text();
+            newChapters.push(newChapter);
+          });
 
-          data.push({ img, href, name, newChapters });
-        }
-      );
+        data.push({ img, href, name, newChapters });
+      });
       $("#ctl00_mainContent_ctl02_divPager > ul > li").each(function () {
         $(this)
           .find("a")

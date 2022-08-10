@@ -32,7 +32,7 @@ app.use("/v1/read", ChapRoute);
 app.use("/v1/details", DetailsRoute);
 app.use("/v1/search", SearchRoute);
 
-const PORT = 6060 || process.env.PORT;
+const PORT = process.env.PORT || 6060;
 
 app.listen(PORT, () => {
   console.log("Server running....");

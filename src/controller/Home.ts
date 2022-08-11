@@ -79,6 +79,7 @@ const HomeController = {
       img: string;
       href: string;
       description: string;
+      info: any;
     }[] = [];
 
     try {
@@ -94,12 +95,25 @@ const HomeController = {
           .attr("href")
           .split("truyen-tranh")[1];
         const description = $(this).find(".box_li > .box_text").text();
-        data.push({ name, img, href, description });
+        let info: string[] = [];
+        $(this)
+          .find(".box_li > .clearfix > .message_main > p")
+          .each(function () {
+            info.push($(this).text());
+          });
+
+        const result = info.reduce((final, item) => {
+          final[item.split(":")[0]] = item.split(":")[1];
+          return final;
+        }, {});
+
+        data.push({ name, img, href, description, info: result });
       });
       res.json({
-        data: data.filter((item) => item.description.length > 0),
+        data: data.filter((item) => item.description.length > 0).splice(0, 10),
       });
     } catch (error) {
+      console.log(error);
       res.status(500).json("Server not fount!");
     }
   },

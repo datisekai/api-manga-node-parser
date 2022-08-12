@@ -4,6 +4,7 @@ import ChapController from "../controller/Chap";
 const routes = express.Router();
 
 routes.get("/", ChapController.getChap);
+routes.get("/chapters", ChapController.getFullChapter);
 
 // vd: /v1/read?slug=/dai-quan-gia-la-ma-hoang/chap-297/869837
 

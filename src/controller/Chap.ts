@@ -8,14 +8,12 @@ const ChapController = {
     const slug = req.query.slug as string;
 
     const results = [];
-    const chapters: Chapter[] = [];
 
     if (!slug) {
       return res.status(404).json("Thiếu slug rồi bạn ơi!");
     }
 
     const url = `${process.env.BASE_URL}/truyen-tranh/${slug}`;
-    const url2 = `${process.env.BASE_URL}/truyen-tranh/${slug?.split("/")[1]}`;
 
     try {
       const html = await axios(url);
@@ -27,10 +25,26 @@ const ChapController = {
         results.push({ img, alt });
       });
 
-      const html2 = await axios(url2);
-      const $2 = cheerio.load(html2.data);
+      res.json({ results });
+    } catch (error) {
+      res.status(500).json("Server not fount!");
+    }
+  },
+  getFullChapter: async (req: Request, res: Response) => {
+    const slug = req.query.slug as string;
+    const chapters: Chapter[] = [];
 
-      $2("#nt_listchapter > nav > ul > li").each(function () {
+    const url = `${process.env.BASE_URL}/truyen-tranh/${slug}`;
+
+    if (!slug) {
+      return res.status(404).json("Thiếu slug rồi bạn ơi!");
+    }
+
+    try {
+      const html = await axios(url);
+      const $ = cheerio.load(html.data);
+
+      $("#nt_listchapter > nav > ul > li").each(function () {
         const href = $(this)
           .find(".col-xs-5 > a")
           .attr("href")
@@ -40,7 +54,7 @@ const ChapController = {
         chapters.push({ href, name, time });
       });
 
-      res.json({ chapters, results });
+      res.json({ chapters });
     } catch (error) {
       res.status(500).json("Server not fount!");
     }

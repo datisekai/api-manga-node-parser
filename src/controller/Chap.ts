@@ -20,7 +20,7 @@ const ChapController = {
       const $ = cheerio.load(html.data);
 
       $(".reading-detail > .page-chapter").each(function () {
-        const img = $(this).find("img").attr("src");
+        const img = $(this).find("img").attr("data-original");
         const alt = $(this).find("img").attr("alt");
         results.push({ img, alt });
       });

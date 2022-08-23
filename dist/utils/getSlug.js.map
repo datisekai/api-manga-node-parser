@@ -1,0 +1,1 @@
+{"version":3,"file":"getSlug.js","sourceRoot":"","sources":["../../src/utils/getSlug.ts"],"names":[],"mappings":";;AAAA,MAAM,WAAW,GAAG,CAAC,GAAW,EAAE,aAAqB,EAAE,EAAE;IACzD,OAAO,GAAG,CAAC,KAAK,CAAC,GAAG,OAAO,CAAC,GAAG,CAAC,QAAQ,GAAG,aAAa,EAAE,CAAC,CAAC,CAAC,CAAC,CAAC;AACjE,CAAC,CAAC;AAEF,kBAAe,WAAW,CAAC"}

@@ -58,4 +58,13 @@ params: {
 }
 ```
 
-### ABGGGGG
+### ABGGGGGdgdfggfdgdfg
+
+```
+GET /search?keyword={keyword}&page={page}: Tìm kiếm truyện theo từ khóa
+
+params: {
+    keyword: string,
+    page?: (mặc định = 1)
+}
+```

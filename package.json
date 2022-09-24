@@ -18,9 +18,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node dist/index.js",
-    "dev": "ts-node-dev src/index.ts",
-    "build": "tsc"
+    "dev": "ts-node-dev index.ts"
   },
   "author": "",
   "license": "ISC",

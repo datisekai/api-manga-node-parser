@@ -1,5 +1,5 @@
 import express from "express";
-import ChapController from "../controller/Chap";
+import ChapController from "../../controller/Chap";
 
 const routes = express.Router();
 

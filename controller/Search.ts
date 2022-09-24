@@ -1,9 +1,24 @@
 import cheerio from "cheerio";
 import axios from "axios";
+import getSlugChap from "../src/utils/getSlug";
 
 interface Filter {
   id: number;
   name: string;
+}
+
+interface NewChapterType {
+  name: String;
+  href: String;
+  time: String;
+}
+
+interface ComicType {
+  href: String;
+  name: String;
+  img: String;
+  newChapter?: NewChapterType;
+  newChapters?: NewChapterType[];
 }
 
 const Search = {
@@ -17,7 +32,7 @@ const Search = {
       return res.status(404).json({ message: "Hihi deo co keyword nha" });
     }
 
-    const url = `${process.env.BASE_URL}/tim-truyen?keyword=${keyword}&page=${page}`;
+    const url = `${process.env.BASE_URL}/the-loai?keyword=${keyword}&page=${page}`;
 
     try {
       const html = await axios(url);
@@ -136,7 +151,7 @@ const Search = {
 
     const data = [];
 
-    const url = `${process.env.BASE_URL}/tim-truyen-nang-cao?genres=${genres}&gender=${gender}&status=${status}&minchapter=${minchapter}&sort=${sort}&page=${page}`;
+    const url = `${process.env.BASE_URL}/tim-truyen?genres=${genres}&gender=${gender}&status=${status}&minchapter=${minchapter}&sort=${sort}&page=${page}`;
 
     try {
       const html = await axios(url);
@@ -184,6 +199,66 @@ const Search = {
     } catch (error) {
       console.log(error);
       res.status(500).json("Server not found!");
+    }
+  },
+  getCategory: async (req, res) => {
+    const genres = req.params.genres;
+
+    if (!genres) {
+      return res.status(500).json("Missing genres");
+    }
+
+    const url = `${process.env.BASE_URL}/the-loai/${genres}`;
+
+    const truyen_moi_cap_nhat: ComicType[] = [];
+
+    let totalPage = "";
+
+    try {
+      const html = await axios(url);
+      const $ = cheerio.load(html.data);
+
+      // Get tuyen_moi_cap_nhat
+      $(".items > .row > .item").each(function () {
+        const href = getSlugChap(
+          $(this).find("figure > div > a").attr("href"),
+          "/truyen-tranh"
+        );
+
+        console.log(href);
+        const name = $(this).find("figcaption > h3 > a").text();
+        const img = $(this)
+          .find("figure > div > a > img")
+          .attr("data-original");
+        const newChapters = [];
+
+        $(this)
+          .find("figcaption > ul > li")
+          .each(function () {
+            const nextChap = { name: "", time: "", href: "" };
+            nextChap.name = $(this).find("a").text();
+            nextChap.time = $(this).find("i").text();
+            nextChap.href = getSlugChap(
+              $(this).find("a").attr("href"),
+              "/truyen-tranh"
+            );
+            newChapters.push(nextChap);
+          });
+
+        truyen_moi_cap_nhat.push({ href, name, img, newChapters });
+      });
+
+      // Get total page
+      $("#ctl00_mainContent_ctl00_divPager > ul > li").each(function () {
+        totalPage = $(this).find("a").attr("href");
+      });
+
+      res.json({
+        data: truyen_moi_cap_nhat,
+        totalPage: Number(totalPage.split(`?page=`)[1]),
+      });
+    } catch (err) {
+      res.status(500).json("Server not found");
     }
   },
 };

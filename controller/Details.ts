@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import axios from "axios";
 import cheerio from "cheerio";
-import getSlugChap from "../utils/getSlug";
+import getSlugChap from "../src/utils/getSlug";
 
 const DetailsController = {
   getDetails: async (req: Request, res: Response) => {

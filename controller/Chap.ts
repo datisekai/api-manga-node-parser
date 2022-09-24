@@ -1,7 +1,7 @@
 import axios from "axios";
 import cheerio from "cheerio";
 import { Request, Response } from "express";
-import Chapter from "../models/Chapter";
+import Chapter from "../src/models/Chapter";
 
 const ChapController = {
   getChap: async (req: Request, res: Response) => {

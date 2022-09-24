@@ -2,11 +2,11 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
-import RankRoute from "./routes/RankRoute";
-import HomeRoute from "./routes/Home";
-import ChapRoute from "./routes/Chap";
-import DetailsRoute from "./routes/Details";
-import SearchRoute from "./routes/Search";
+import RankRoute from "../src/routes/RankRoute";
+import HomeRoute from "../src/routes/Home";
+import ChapRoute from "../src/routes/Chap";
+import DetailsRoute from "../src/routes/Details";
+import SearchRoute from "../src/routes/Search";
 
 dotenv.config();
 
@@ -32,7 +32,7 @@ app.use("/v1/read", ChapRoute);
 app.use("/v1/details", DetailsRoute);
 app.use("/v1/search", SearchRoute);
 
-const PORT = process.env.PORT || 6060;
+const PORT = process.env.PORT || 5801;
 
 app.listen(PORT, () => {
   console.log("Server running....");

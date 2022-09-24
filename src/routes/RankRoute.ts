@@ -1,5 +1,5 @@
 import express from "express";
-import RankController from "../controller/RankController";
+import RankController from "../../controller/RankController";
 const router = express.Router();
 
 //Lấy truyện theo thể loại, sắp xếp

@@ -1,6 +1,6 @@
 # Manga - API
 
-### BASE_URL: https://manga-api-production.up.railway.app/v1/
+### BASE_URL: [https://api-manga-node-parser.vercel.app/v1](https://api-manga-node-parser.vercel.app/v1)
 
 ### /rank:
 

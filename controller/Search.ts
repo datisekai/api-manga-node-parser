@@ -241,7 +241,10 @@ const Search = {
         const img = item
           .querySelector("figure div a img")
           .getAttribute("data-original");
-        const href = item.querySelector("figure div a").getAttribute("href");
+        const href = item
+          .querySelector("figure div a")
+          .getAttribute("href")
+          .split("truyen-tranh")[1];
         const name = item.querySelector("figure figcaption h3").innerText;
         const newChapters: { name: string; href: string; time: string }[] = [];
         item

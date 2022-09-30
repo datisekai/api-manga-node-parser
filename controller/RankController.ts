@@ -1,79 +1,69 @@
 import cheerio from "cheerio";
 import axios from "axios";
+import { parse } from "node-html-parser";
 
 const RankController: any = {
-  getMangaOfRank: (req, resp) => {
+  getMangaOfRank: async (req, resp) => {
     const data = [];
     const sort = Number(req.query.sort);
     const status = Number(req.query.status);
     const page = Number(req.query.page);
     const type = req.params.type;
+    let totalPage = "";
 
     let url = "";
     if (type == "all") {
       url = `${
-        process.env.BASE_URL + "/tim-truyen"
+        process.env.BASE_URL + "/the-loai"
       }?status=${status}&sort=${sort}&page=${page}`;
     } else {
-      url = `${process.env.BASE_URL}/tim-truyen/${type}?status=${status}&sort=${sort}&page=${page}`;
+      url = `${process.env.BASE_URL}/the-loai/${type}?status=${status}&sort=${sort}&page=${page}`;
     }
 
     try {
-      axios(url).then((res) => {
-        const html = res.data;
-        const $ = cheerio.load(html);
-        const paginations = [];
-        $(`.Module-${process.env.MODULE_SEARCH_KEYWORD}`, html).each(
-          function () {
-            $(this)
-              .find("div > #ctl00_mainContent_ctl01_divPager > ul > li")
-              .each(function () {
-                const pagination = $(this).find("a").attr("href");
-                paginations.push(pagination);
-              });
-            $(this)
-              .find("div > div > div > .item")
-              .each(function () {
-                const href = $(this)
-                  .find("figure > div > a")
-                  .attr("href")
-                  .split(`${process.env.BASE_URL}/truyen-tranh`)[1];
-                const img = $(this)
-                  .find("figure > div > a > img")
-                  .attr("data-original");
-                const name = $(this)
-                  .find("figure > figcaption > h3 > a")
-                  .text();
-                const newChapters = [];
-                $(this)
-                  .find("figure > figcaption > ul > li")
-                  .each(function () {
-                    const name = $(this).find("a").text();
-                    const href = $(this)
-                      .find("a")
-                      .attr("href")
-                      .split(`${process.env.BASE_URL}/truyen-tranh`)[1];
-                    const time = $(this).find("i").text();
-                    newChapters.push({
-                      name,
-                      href,
-                      time,
-                    });
-                  });
-                data.push({
-                  href,
-                  img,
-                  name,
-                  newChapters,
-                });
-              });
-          }
-        );
-        return resp.json({
-          data,
-          totalPage:
-            Number(paginations[paginations.length - 1]?.split("page=")[1]) || 1,
+      const html = await axios(url);
+      const root = parse(html.data);
+      root.querySelectorAll(".items .row .item").forEach((item: any) => {
+        const newChapters = [];
+
+        item.querySelectorAll(".comic-item li").forEach((item: any) => {
+          newChapters.push({
+            name: item.querySelector("a").innerText,
+            href: item
+              .querySelector("a")
+              .getAttribute("href")
+              .split("/truyen-tranh")[1],
+            time: item.querySelector("i").innerText,
+          });
         });
+
+        data.push({
+          newChapters,
+          href: item
+            .querySelector("figure .image a")
+            .getAttribute("href")
+            .split("truyen-tranh")[1],
+          name: item.querySelector("figure figcaption h3 a").innerText,
+          img: item
+            .querySelector("figure .image a img")
+            .getAttribute("data-original"),
+        });
+      });
+
+      root
+        .querySelectorAll("#ctl00_mainContent_ctl01_divPager > ul > li")
+        .forEach((item: any) => {
+          if (item.querySelector("a")) {
+            totalPage = item
+              .querySelector("a")
+              .getAttribute("href")
+              .split("page=")[1];
+          }
+        });
+
+      return resp.json({
+        data,
+        totalPage: Number(totalPage),
       });
     } catch (err) {
       return resp.status(500).json({ message: "Internal server" });

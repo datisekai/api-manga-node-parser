@@ -35,7 +35,9 @@ const HomeController = {
           item.querySelector("figure div a").getAttribute("href"),
           "/truyen-tranh"
         );
-        const img = item.querySelector("figure div a img").getAttribute("src");
+        const img = item
+          .querySelector("figure div a img")
+          .getAttribute("data-original");
 
         const name = item.querySelector("figure figcaption h3 a").innerText;
         let chapters: NewChapterType[] = [];

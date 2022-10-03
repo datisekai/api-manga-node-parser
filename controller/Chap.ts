@@ -50,13 +50,12 @@ const ChapController = {
     if (!slug) {
       return res.status(404).json("Thiếu slug rồi bạn ơi!");
     }
-
     try {
       const html = await axios(url);
       const root = parse(html.data);
       root
         .querySelectorAll("#nt_listchapter > nav > ul > li")
-        .forEach((item: any) => {
+        .forEach((item: any, index: number) => {
           chapters.push({
             href: item
               .querySelector(".col-xs-5 a")
@@ -66,19 +65,47 @@ const ChapController = {
             time: item.querySelector(".col-xs-4").innerText,
           });
         });
-      // const $ = cheerio.load(html.data);
-
-      // $("#nt_listchapter > nav > ul > li").each(function () {
-      //   const href = $(this)
-      //     .find(".col-xs-5 > a")
-      //     .attr("href")
-      //     .split("truyen-tranh")[1];
-      //   const name = $(this).find(".col-xs-5 > a").text();
-      //   const time = $(this).find(".col-xs-4").text();
-      //   chapters.push({ href, name, time });
-      // });
 
       res.json({ chapters });
+    } catch (error) {
+      res.status(500).json("Server not fount!");
+    }
+  },
+  getFullChapterPagination: async (req: Request, res: Response) => {
+    const slug = req.query.slug as string;
+    const chapters: Chapter[] = [];
+    const { page = 1, limit = 10 } = req.query;
+
+    const url = `${process.env.BASE_URL}/truyen-tranh/${slug}`;
+
+    if (!slug) {
+      return res.status(404).json("Thiếu slug rồi bạn ơi!");
+    }
+    let count = 0;
+    try {
+      const html = await axios(url);
+      const root = parse(html.data);
+      root
+        .querySelectorAll("#nt_listchapter > nav > ul > li")
+        .forEach((item: any, index: number) => {
+          count++;
+          const start = (+page - 1) * +limit;
+          const end = +page * +limit;
+          if (index >= start && index < end) {
+            chapters.push({
+              href: item
+                .querySelector(".col-xs-5 a")
+                .getAttribute("href")
+                .split("truyen-tranh")[1],
+              name: item.querySelector(".col-xs-5 a").innerText,
+              time: item.querySelector(".col-xs-4").innerText,
+            });
+          }
+        });
+
+      console.log(count);
+
+      res.json({ chapters, totalPage: Math.ceil(count / +limit) });
     } catch (error) {
       res.status(500).json("Server not fount!");
     }

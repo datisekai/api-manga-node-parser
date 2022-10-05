@@ -103,9 +103,8 @@ const ChapController = {
           }
         });
 
-      console.log(count);
 
-      res.json({ chapters, totalPage: Math.ceil(count / +limit) });
+      res.json({ chapters, totalPage: Math.ceil(count / +limit),page });
     } catch (error) {
       res.status(500).json("Server not fount!");
     }
